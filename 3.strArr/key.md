@@ -519,3 +519,164 @@ Array
 )
 */
 ```
+
+
+### 数组
+```
+分类:
+索引数组(数字做标)
+关联数组(有一个不是数字做下标的，例如字符串)
+```
+
+#### 1. 直接赋值
+```php
+$arr1[] = 1;
+$arr1[] = 2;
+$arr1[] = 3;
+// 0->1,1->2,2->3
+
+$arr2[3] = 4;
+$arr2[] = 5;
+$arr2[10] = 6;
+// 3->4,4->5,10->6
+
+$arr3[] = ['1',2, NULL, true];
+// 0->string(1), 1->2,2->NULL,3->bool(true)
+```
+#### 2. array()赋值
+```php
+$arr1 = array(1,2,3);
+$arr2 = array(3=>4, 5, 10=>6);
+$arr3 = array('1', 2, NULL, true);
+$arr4 = array(
+    "name"=> '清华大学出版社',
+    "address" => '中国北京',
+    "star"=>'五星A级'
+);
+```
+
+#### 3. range()函数方式
+```php
+$arr1 = range(1, 4);
+$arr2 = range('a', 'g');
+$arr3 = range('1', '4', 2);
+// 0->1, 1->3
+$arr4 = range('a', 'g', 3)
+```
+### 4.list()方式
+```php
+$file = 'example.txt';
+$fp = fopen($file, 'r');
+if($fp === false)
+{
+    exit();
+}
+while(!feof($fp))
+{
+    $line = fgets($fp);
+    $str = explode('/', trim($line));
+    list($stuNo[], $stuName[], $stuPhone[]) = $str;
+}
+fclose($fp);
+```
+
+
+### 数组的操作
+
+#### 数组的测试
+`is_array()`
+
+```php
+$isArray=is_array($arr1); //返回boolean
+```
+
+#### 数组的大小
+`count()`
+
+```php
+$arr1=range(1,100);
+$arr2=array(array(1,2,3), array(4,5,6));
+
+count($arr1);// 返回数组元素个数,100
+count($arr2); //返回数组元素第一层个数, 2
+count($arr2, COUNT_RECURSIVE); //递归,8
+```
+
+#### 数组的遍历
+```php
+// 遍历student数组下的key为class，值为stu(数组)
+foreach ($student as $class => $stu)
+{
+    // 遍历该班级stu数组，学生值为info(数组)
+   foreach ($stu as $info) 
+   {
+        // $value学生的各个信息数据
+        foreach($info as $value)
+        {
+
+        }
+   }
+}
+```
+
+#### 数组的操作
+```php
+array_unshift($arr, 1); //数组头部插入1
+array_push($arr, 2);//尾部添加2
+array_shift($arr);//删除头元素
+array_pop($arr);//删除尾元素
+
+array_keys($arr);//返回$arr的key数组
+array_values($arr);//返回$arr的value数组
+```
+
+#### 数组其他操作
+```php
+array_merge_recursive($arr1, $arr2); //返回合并$arr1与$arr2合并后的数组
+
+asort($arr1); //根据$arr1的值进行字符串排序
+```
+`array_slice`
+```php
+$fruits = ["apple", "banana", "orange", "grape", "mango"];
+
+// 从索引 1 开始，截取 3 个元素
+$slice = array_slice($fruits, 1, 3);
+print_r($slice);
+/* 输出：
+Array
+(
+    [0] => banana  // 原索引 1
+    [1] => orange  // 原索引 2
+    [2] => grape   // 原索引 3
+)
+*/
+// 注：默认不保留原键名，新数组索引从 0 开始
+```
+`array_chunk`
+```php
+$fruits = ["apple", "banana", "orange", "grape", "mango", "kiwi"];
+
+// 每个子数组最多包含 2 个元素
+$chunks = array_chunk($fruits, 2);
+print_r($chunks);
+/* 输出：
+Array
+(
+    [0] => Array ( [0] => apple [1] => banana )  // 2 个元素
+    [1] => Array ( [0] => orange [1] => grape )  // 2 个元素
+    [2] => Array ( [0] => mango [1] => kiwi )    // 2 个元素
+)
+*/
+```
+
+
+### 预定义数组
+* _SERVER
+* _ENV
+* _GET和_POST
+* _FILES
+* _REQUEST
+* _COOKIE
+* _SESSION
+* GLOBALS
