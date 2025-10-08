@@ -281,3 +281,241 @@ cat(?!dog)  : 负, catcow的cat，后面不是dog的cat; eg: ?! 也就是dog不�
 (?<=cat)dog  : 正，加了个<指后面，换过来了，cat匹配，就后面dog
 (?<!cat)dog  : 负， cat不匹配，就后面的dog
 ```
+
+
+### php正则表达式函数
+#### 1.字符串匹配函数
+`preg_match()`
+```php
+
+$str = "Email: user1@test.com, Phone: 123-456, Email: user2@example.com";
+
+// 匹配第一个邮箱地址（正则：简单匹配邮箱格式）
+$pattern = '/\w+@\w+\.\w+/';
+$isMatched = preg_match($pattern, $str, $matches);
+
+echo "是否匹配：" . $isMatched . "\n"; // 输出：1（匹配成功）
+echo "第一次匹配结果：" . $matches[0]; // 输出：user1@test.com
+```
+
+`preg_match_all()`
+```php
+$str = "Email: user1@test.com, Phone: 123-456, Email: user2@example.com";
+
+// 匹配所有邮箱地址
+$pattern = '/\w+@\w+\.\w+/';
+$total = preg_match_all($pattern, $str, $matches);
+
+echo "匹配总次数：" . $total . "\n"; // 输出：2
+echo "所有匹配结果：\n";
+print_r($matches[0]); 
+// 输出：
+// Array (
+//   [0] => user1@test.com
+//   [1] => user2@example.com
+// )
+```
+`带()分组的匹配`
+```php
+<?php
+$str = "Name: Alice (Age:25), Name: Bob (Age:30)";
+
+// 正则：匹配 "Name: 姓名 (Age:年龄)"，分组提取姓名和年龄
+$pattern = '/Name: (\w+) \(Age:(\d+)\)/';
+
+// 1. preg_match()：只提取第一个匹配的分组
+preg_match($pattern, $str, $m1);
+echo "第一次匹配的分组：\n";
+print_r($m1);
+// 输出：
+// Array (
+//   [0] => Name: Alice (Age:25)  // 完整匹配
+//   [1] => Alice                // 第一个分组（姓名）
+//   [2] => 25                   // 第二个分组（年龄）
+// )
+
+// 2. preg_match_all()：提取所有匹配的分组（按分组维度存储）
+preg_match_all($pattern, $str, $m2);
+echo "所有匹配的分组：\n";
+print_r($m2);
+// 输出：
+// Array (
+//   [0] => Array ( [0] => Name: Alice (Age:25), [1] => Name: Bob (Age:30) )  // 所有完整匹配
+//   [1] => Array ( [0] => Alice, [1] => Bob )                                // 所有第一个分组
+//   [2] => Array ( [0] => 25, [1] => 30 )                                    // 所有第二个分组
+// )
+?>
+```
+
+#### 2.字符串搜索和替换函数
+`preg_replace()`
+
+基本替换
+```php
+$str = "Hello 123, World 456!";
+
+// 替换所有数字为 "*"
+$pattern = '/\d+/'; // 匹配一个或多个数字
+$replacement = '*';
+$newStr = preg_replace($pattern, $replacement, $str);
+
+echo $newStr; // 输出：Hello *, World *!
+```
+多模式替换
+```php
+$str = "Name: Alice, Age: 25, Email: alice@test.com";
+
+// 模式数组：匹配姓名、年龄、邮箱的标识
+$patterns = ['/Name: /', '/Age: /', '/Email: /'];
+// 替换数组：对应移除各标识
+$replacements = ['', '', ''];
+
+$newStr = preg_replace($patterns, $replacements, $str);
+echo $newStr; // 输出：Alice, 25, alice@test.com
+```
+分组引用
+```php
+$str = "Alice (25), Bob (30)";
+
+// 正则：匹配 "姓名 (年龄)"，分组捕获姓名和年龄
+$pattern = '/(\w+) \((\d+)\)/';
+// 替换为 "年龄：年龄，姓名：姓名"（引用分组）
+$replacement = '年龄：$2，姓名：$1';
+
+$newStr = preg_replace($pattern, $replacement, $str);
+echo $newStr; // 输出：年龄：25，姓名：Alice, 年龄：30，姓名：Bob
+```
+
+#### 3.字符串拆分函数
+`preg_split()`
+
+基本
+```php
+$str = "apple   banana\torange\npear"; // 包含多个空格、制表符、换行
+
+// 正则：\s+ 匹配一个或多个空白字符
+$arr = preg_split('/\s+/', $str);
+print_r($arr);
+/* 输出：
+Array
+(
+    [0] => apple
+    [1] => banana
+    [2] => orange
+    [3] => pear
+)
+*/
+```
+
+拆分次数限制
+```php
+$str = "a,b,c,d,e";
+
+// 按逗号拆分，但最多拆分为 3 个元素
+$arr = preg_split('/,/', $str, 3);
+print_r($arr);
+/* 输出：
+Array
+(
+    [0] => a
+    [1] => b
+    [2] => c,d,e  // 剩余部分作为最后一个元素
+)
+*/
+```
+拆分并过滤空元素
+```php
+$str = "test,,example,,demo"; // 包含连续逗号（会产生空元素）
+
+// 按逗号拆分，不过滤空元素（默认）
+$arr1 = preg_split('/,/', $str);
+print_r($arr1);
+/* 输出（含空元素）：
+Array ( [0] => test [1] => [2] => example [3] => [4] => demo )
+*/
+
+// 过滤空元素（添加 PREG_SPLIT_NO_EMPTY 标志）
+$arr2 = preg_split('/,/', $str, -1, PREG_SPLIT_NO_EMPTY);
+print_r($arr2);
+/* 输出（无空元素）：
+Array ( [0] => test [1] => example [2] => demo )
+*/
+```
+保留拆分的分隔符
+```php
+$str = "hello123world456php";
+
+// 正则：匹配数字（用分组捕获分隔符）
+$pattern = '/(\d+)/'; 
+// 拆分并保留分隔符（数字）
+$arr = preg_split($pattern, $str, -1, PREG_SPLIT_DELIM_CAPTURE);
+
+print_r($arr);
+/* 输出：
+Array
+(
+    [0] => hello
+    [1] => 123      // 第一个分隔符（数字）
+    [2] => world
+    [3] => 456      // 第二个分隔符（数字）
+    [4] => php
+)
+*/
+```
+
+#### 4.正则表达式转义
+`preg_quote()`
+
+就是说我要将匹配3.5*2这个字符串，但是作为正则表达式会将.*等字符作为量词，在进行之前又不想手动转义太麻烦，这个函数解决问题
+```php
+$target = "3.5*2"; // 包含 . 和 *（正则特殊字符）
+$str = "The result is 3.5*2, not 3*5.2";
+
+// 直接用 $target 作为正则会出错（. 和 * 被当作元字符）
+// 正确做法：先用 preg_quote() 转义
+$pattern = '/'.preg_quote($target).'/'; 
+
+preg_match($pattern, $str, $matches);
+echo $matches[0]; // 输出：3.5*2（正确匹配）
+```
+
+#### 5. 数组过滤函数
+`preg_grep()`
+
+也就是说把数组的每个元素当做每一行进行模糊过滤，可以看做linux的grep，只留下包含匹配的元素(行)
+```php
+$arr = ["apple123", "banana", "orange45", "grape", "678mango"];
+
+// 正则：匹配包含至少一个数字的字符串（\d+ 表示一个或多个数字）
+$pattern = '/\d+/';
+// 筛选所有包含数字的元素
+$matchedArr = preg_grep($pattern, $arr);
+
+print_r($matchedArr);
+/* 输出（键名与原数组一致）：
+Array
+(
+    [0] => apple123
+    [2] => orange45
+    [4] => 678mango
+)
+*/
+```
+反向筛选
+```php
+$arr = ["user1@test.com", "abc123", "admin@example.com", "xyz789"];
+
+// 正则：匹配邮箱格式（简单匹配，包含 @ 和 .）
+$pattern = '/@.+\./';
+// 反向筛选：返回非邮箱格式的元素
+$unmatchedArr = preg_grep($pattern, $arr, PREG_GREP_INVERT);
+
+print_r($unmatchedArr);
+/* 输出：
+Array
+(
+    [1] => abc123
+    [3] => xyz789
+)
+*/
+```
