@@ -8,7 +8,14 @@
 </head>
 <body>
  <h4>用户图像上传数据</h4>  <hr/>
+ <!-- 
+ get无法上传大文件，用post，
+ 交给3.php处理
+ 默认情况下，表单编码不支持文件传输，只有设置为multipart/form-data，
+ 浏览器才会将文件以二进制流的形式发送给服务器，确保文件能被正确接收
+ -->
  <form action="3.php" method="post" enctype="multipart/form-data">
+    <!-- 这个文件选择框起名为userPhoto -->
     上传用户图像：<input type="file" name="userPhoto"/>
     <input type="submit" value="上传" />
  </form>

@@ -9,8 +9,9 @@
     <h4>接受用户图像上传数据</h4><hr/>
     <?php
         echo '<pre>';
-        print_r($_FILES) ;
-        echo '<pre>';
+        // 通过$_FILES获取上传文件信息, print_r打印变量的结构和内容
+        print_r(value: $_FILES) ;
+        echo '</pre>';
     ?>
 </body>
 </html>

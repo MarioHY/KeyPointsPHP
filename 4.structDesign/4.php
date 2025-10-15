@@ -15,6 +15,7 @@
 <body>
     <h4>使用配置文件中的数据</h4>
     <?php
+    // 读取.ini格式的配置文件，会解析成数组，可以看做facts信息
         $config = parse_ini_file('config/config.ini', true);
         echo '<pre>';
         print_r($config);
